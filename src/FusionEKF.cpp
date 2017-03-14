@@ -23,9 +23,9 @@ FusionEKF::FusionEKF() {
               0, 0.0225;
 
   R_radar_ = MatrixXd(3, 3);
-  R_radar_ << 0.09, 0, 0,
-              0, 0.0009, 0,
-              0, 0, 0.09;
+  R_radar_ << 0.02, 0, 0,
+              0, 0.02, 0,
+              0, 0, 0.02;
 
   H_laser_ = MatrixXd(2, 4);
   H_laser_ << 1, 0, 0, 0,
@@ -59,15 +59,22 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   if (!is_initialized_) {
     // first measurement
     ekf_.x_ = VectorXd(4);
-    ekf_.x_ << 1, 1, 1, 1;
+    ekf_.x_ << 0, 0, 0, 0;
 
     previous_timestamp_ = measurement_pack.timestamp_;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       float rho = measurement_pack.raw_measurements_[0];
       float phi = measurement_pack.raw_measurements_[1];
+      if (!rho || !phi) {
+        return;
+      }
       ekf_.x_ << rho * cos(phi), rho * sin(phi), 0, 0;
     } else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
+      if (!measurement_pack.raw_measurements_[0] ||
+          !measurement_pack.raw_measurements_[1]) {
+        return;
+      }
       ekf_.x_ << measurement_pack.raw_measurements_[0],
           measurement_pack.raw_measurements_[1], 0, 0;
     }
