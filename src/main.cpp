@@ -123,7 +123,6 @@ int main(int argc, char *argv[]) {
     gt_package.gt_values_ << x_gt, y_gt, vx_gt, vy_gt;
     gt_pack_list.push_back(gt_package);
   }
-
   // Create a Fusion EKF instance
   FusionEKF fusionEKF;
 
