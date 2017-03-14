@@ -23,9 +23,9 @@ FusionEKF::FusionEKF() {
               0, 0.0225;
 
   R_radar_ = MatrixXd(3, 3);
-  R_radar_ << 0.0225, 0, 0,
-              0, 0.0225, 0,
-              0, 0, 0.0225;
+  R_radar_ << 0.09, 0, 0,
+              0, 0.0009, 0,
+              0, 0, 0.09;
 
   H_laser_ = MatrixXd(2, 4);
   H_laser_ << 1, 0, 0, 0,
@@ -59,6 +59,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   if (!is_initialized_) {
     // first measurement
     ekf_.x_ = VectorXd(4);
+    ekf_.x_ << 1, 1, 1, 1;
 
     previous_timestamp_ = measurement_pack.timestamp_;
 
